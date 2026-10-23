@@ -10,6 +10,7 @@
 | GitHub Pages | https://07-je-grok-love-personal-20260928.github.io/OT-Historical-Books-GROKstudy/ |
 | Surge | https://ot-historical-books-20261023-v1-grokstudy.surge.sh |
 | Netlify | https://ot-historical-books-20261023-v1-grokstudy.netlify.app |
+| Release v1.0 | https://github.com/07-Je-Grok-Love-Personal-20260928/OT-Historical-Books-GROKstudy/releases/tag/v1.0-20261023 |
 | 源码仓库 | https://github.com/07-Je-Grok-Love-Personal-20260928/OT-Historical-Books-GROKstudy |
 
 ## 📚 内容（14 页）
@@ -53,7 +54,7 @@ python3 ../tools/qa.py                # 390/768/1440 响应式与溢出检查
 
 ## 📝 更新说明
 
-### v1.0 · 20261023-v1
+### v1.0 · 20261023-v1（发布：2026-10-24 00:11:33 (Asia/Taipei, UTC+8)）
 - 首次发布：14 页，7 幅真实地图，时间线、故事线、流程图、思维导图、动画。
 - 三项联合信条对照与三大信经背诵版、深度对比。
 - 口诀、翻卡、测验；目录可收起；玻璃拟态、100% 宽度响应式。
@@ -63,4 +64,4 @@ python3 ../tools/qa.py                # 390/768/1440 响应式与溢出检查
 
 | 版本 | 日期（台北时间） | 说明 |
 |---|---|---|
-| v1.0 | 2026-10-23 | 首次发布 |
+| v1.0 | 2026-10-23（Release 时间戳：2026-10-24 00:11:33 (Asia/Taipei, UTC+8)） | 首次发布；tag `v1.0-20261023` |
