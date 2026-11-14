@@ -2,15 +2,60 @@
 var d=document,h=d.documentElement,LS=window.localStorage;
 function g(k){try{return LS.getItem(k)}catch(e){return null}}function s(k,v){try{LS.setItem(k,v)}catch(e){}}
 var wide=function(){return window.matchMedia('(min-width:1100px)').matches};
-// TOC toggle
+// ----- 3-level TOC: toggle, fold memory, resize, filter -----
 var tb=d.getElementById('tocBtn');
 if(tb)tb.addEventListener('click',function(){if(wide()){h.classList.toggle('toc-off');s('otb.toc',h.classList.contains('toc-off')?'off':'on')}else h.classList.toggle('toc-open')});
 var sc=d.querySelector('.scrim');if(sc)sc.addEventListener('click',function(){h.classList.remove('toc-open')});
 d.querySelectorAll('.toc a').forEach(function(a){a.addEventListener('click',function(){if(!wide())h.classList.remove('toc-open')})});
-d.querySelectorAll('.toc .tg').forEach(function(b){b.addEventListener('click',function(){var li=b.closest('li');li.classList.toggle('closed');b.setAttribute('aria-expanded',!li.classList.contains('closed'))})});
-var ex=d.getElementById('tocAll');if(ex)ex.addEventListener('click',function(){var c=d.querySelectorAll('.toc li.closed').length;d.querySelectorAll('.toc li.has').forEach(function(li){li.classList.toggle('closed',!c)})});
-// TOC filter
-var ti=d.getElementById('tocQ');if(ti)ti.addEventListener('input',function(){var q=ti.value.trim();d.querySelectorAll('.toc li').forEach(function(li){var t=li.textContent;li.style.display=!q||t.indexOf(q)>=0?'':'none';if(q)li.classList.remove('closed')})});
+var foldKey='otb.tocfold.'+(location.pathname.split('/').pop()||'index.html');
+function readFold(){try{return JSON.parse(g(foldKey)||'{}')}catch(e){return {}}}
+function saveFold(){var o={};d.querySelectorAll('.toc li.has').forEach(function(li){o[li.getAttribute('data-id')||'']=li.classList.contains('closed')});s(foldKey,JSON.stringify(o))}
+(function restoreFold(){
+  var o=readFold();
+  d.querySelectorAll('.toc li.has').forEach(function(li){
+    var id=li.getAttribute('data-id');
+    if(o[id]){li.classList.add('closed');var b=li.querySelector(':scope > .grp .tg');if(b)b.setAttribute('aria-expanded','false')}
+  });
+})();
+d.querySelectorAll('.toc .tg').forEach(function(b){b.addEventListener('click',function(){var li=b.closest('li');li.classList.toggle('closed');b.setAttribute('aria-expanded',!li.classList.contains('closed'));saveFold()})});
+var ex=d.getElementById('tocAll');if(ex)ex.addEventListener('click',function(){var c=d.querySelectorAll('.toc li.has.closed').length;var close=!c;d.querySelectorAll('.toc li.has').forEach(function(li){li.classList.toggle('closed',close);var b=li.querySelector(':scope > .grp .tg');if(b)b.setAttribute('aria-expanded',!close)});saveFold()});
+var ti=d.getElementById('tocQ');if(ti)ti.addEventListener('input',function(){var q=ti.value.trim();d.querySelectorAll('.toc li').forEach(function(li){var show=!q||(li.textContent||'').indexOf(q)>=0;li.style.display=show?'':'none';if(q&&show){li.classList.remove('closed');var b=li.querySelector(':scope > .grp .tg');if(b)b.setAttribute('aria-expanded','true')}})});
+function clampToc(w){
+  var min=220, max=Math.min(640, Math.floor(innerWidth*(wide()?0.7:0.92)));
+  return Math.max(min, Math.min(max, Math.round(w)));
+}
+function applyTocW(w){w=clampToc(w);h.style.setProperty('--tocw',w+'px');var r=d.getElementById('tocResize');if(r){r.setAttribute('aria-valuenow',w);r.setAttribute('aria-valuemin',220);r.setAttribute('aria-valuemax',640)}return w}
+applyTocW(parseInt(getComputedStyle(h).getPropertyValue('--tocw'),10)||320);
+(function tocResize(){
+  var handle=d.getElementById('tocResize'), panel=d.getElementById('tocPanel');
+  if(!handle||!panel)return;
+  var dragging=false, startX=0, startW=0;
+  function widthNow(){return panel.getBoundingClientRect().width}
+  function down(ev){
+    if(ev.pointerType==='mouse'&&ev.button!==0)return;
+    ev.preventDefault();
+    dragging=true; startX=ev.clientX; startW=widthNow();
+    h.classList.add('toc-drag');
+    try{handle.setPointerCapture(ev.pointerId)}catch(e){}
+  }
+  function move(ev){if(!dragging)return;ev.preventDefault();applyTocW(startW+(ev.clientX-startX))}
+  function up(ev){
+    if(!dragging)return;dragging=false;h.classList.remove('toc-drag');
+    s('otb.tocw', String(clampToc(widthNow())));
+    try{handle.releasePointerCapture(ev.pointerId)}catch(e){}
+  }
+  handle.addEventListener('pointerdown',down);
+  handle.addEventListener('pointermove',move);
+  handle.addEventListener('pointerup',up);
+  handle.addEventListener('pointercancel',up);
+  handle.addEventListener('keydown',function(e){
+    var w=widthNow();
+    if(e.key==='ArrowLeft'){e.preventDefault();s('otb.tocw',String(applyTocW(w-24)))}
+    if(e.key==='ArrowRight'){e.preventDefault();s('otb.tocw',String(applyTocW(w+24)))}
+    if(e.key==='Home'){e.preventDefault();s('otb.tocw',String(applyTocW(220)))}
+    if(e.key==='End'){e.preventDefault();s('otb.tocw',String(applyTocW(640)))}
+  });
+})();
 // theme
 var th=d.getElementById('thBtn');if(th)th.addEventListener('click',function(){var n=h.getAttribute('data-theme')==='paper'?'night':'paper';h.setAttribute('data-theme',n);s('otb.theme',n)});
 // progress
@@ -19,9 +64,19 @@ function onS(){if(tick)return;tick=true;requestAnimationFrame(function(){var m=h
 if(pr){window.addEventListener('scroll',onS,{passive:true});onS()}
 // scrollspy
 var links={};d.querySelectorAll('.toc a[href^="#"]').forEach(function(a){links[a.getAttribute('href').slice(1)]=a});
+function openAncestors(a){
+  var li=a.closest('li');
+  while(li){
+    if(li.classList.contains('has')&&li.classList.contains('closed')){
+      li.classList.remove('closed');
+      var b=li.querySelector(':scope > .grp .tg');if(b)b.setAttribute('aria-expanded','true');
+    }
+    var ol=li.parentElement;li=ol?ol.closest('li'):null;
+  }
+}
 if('IntersectionObserver' in window){
- var cur=null,io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var a=links[e.target.id];if(a&&a!==cur){if(cur)cur.classList.remove('on');a.classList.add('on');cur=a;var li=a.closest('li.has');if(li)li.classList.remove('closed');if(a.scrollIntoViewIfNeeded)a.scrollIntoViewIfNeeded(false)}}})},{rootMargin:'-70px 0px -70% 0px'});
- d.querySelectorAll('main h2[id],main h3[id]').forEach(function(x){io.observe(x)});
+ var cur=null,io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var a=links[e.target.id];if(a&&a!==cur){if(cur)cur.classList.remove('on');a.classList.add('on');cur=a;openAncestors(a);if(a.scrollIntoViewIfNeeded)a.scrollIntoViewIfNeeded(false);else a.scrollIntoView({block:'nearest'})}}})},{rootMargin:'-70px 0px -70% 0px'});
+ d.querySelectorAll('main h2[id],main h3[id],main h4[id]').forEach(function(x){io.observe(x)});
  if(!window.matchMedia('(prefers-reduced-motion:reduce)').matches){
   var ro=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');ro.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'});
   d.querySelectorAll('.reveal').forEach(function(x){ro.observe(x)});
@@ -120,7 +175,13 @@ var TILES=[
  {id:'esri-street',n:'Esri 街道',u:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',o:{maxZoom:19,attribution:'Tiles © Esri'}},
  {id:'esri-phys',n:'Esri 自然地貌',u:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer/tile/{z}/{y}/{x}',o:{maxZoom:8,attribution:'Tiles © Esri'}},
  {id:'hot',n:'OSM France · HOT',u:'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',o:{maxZoom:19,subdomains:'abc',attribution:'© OSM · HOT · OSM France'}},
- {id:'topo',n:'OpenTopoMap',u:'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',o:{maxZoom:17,subdomains:'abc',attribution:'© OSM, SRTM, OpenTopoMap (CC-BY-SA)'}}
+ {id:'topo',n:'OpenTopoMap',u:'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',o:{maxZoom:17,subdomains:'abc',attribution:'© OSM, SRTM, OpenTopoMap (CC-BY-SA)'}},
+ {id:'osmde',n:'OSM 德国',u:'https://tile.openstreetmap.de/{z}/{x}/{y}.png',o:{maxZoom:19,attribution:'© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'}},
+ {id:'osmfr',n:'OSM 法国',u:'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png',o:{maxZoom:20,subdomains:'abc',attribution:'© OSM · OSM France'}},
+ {id:'cyclosm',n:'CyclOSM',u:'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',o:{maxZoom:20,subdomains:'abc',attribution:'© OSM · CyclOSM'}},
+ {id:'esri-relief',n:'Esri 晕渲地形',u:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}',o:{maxZoom:13,attribution:'Tiles © Esri'}},
+ {id:'esri-gray',n:'Esri 浅灰底图',u:'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',o:{maxZoom:16,attribution:'Tiles © Esri'}},
+ {id:'esri-natgeo',n:'Esri 国家地理',u:'https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',o:{maxZoom:16,attribution:'Tiles © Esri'}}
 ];
 window.__tileLog=[];
 var leafletP=null;
@@ -202,9 +263,9 @@ function initMapbox(box){
   var data;try{data=JSON.parse(raw.textContent)}catch(e){return}
   var tabs=box.querySelectorAll('.mtabs [data-v]'),views={c:box.querySelector('.mv-c'),g:box.querySelector('.mv-g'),l:box.querySelector('.mv-l')};
   var info=box.querySelector('.minfo'),lis=box.querySelectorAll('.gm-leg li'),pins=box.querySelectorAll('.hs'),play=box.querySelector('.mplay');
-  var live=null,liveP=null,cur=-1,timer=0;
+  var live=box.__live||null,liveP=null,cur=box.__cur||-1,timer=0;
   function show(i,fromMap){
-    var p=data.places[i];if(!p)return;cur=i;
+    var p=data.places[i];if(!p)return;cur=i;box.__cur=i;
     pins.forEach(function(x,j){x.classList.toggle('on',j===i)});
     lis.forEach(function(x,j){x.classList.toggle('on',j===i)});
     if(info){info.style.setProperty('--c',p.c);info.innerHTML='<div><b>'+p.i+' '+p.n+'</b> '+(p.en?'<i>'+p.en+'</i>':'')+' · <span class="d">'+p.w+'</span> · <span class="mut">'+(i+1)+' / '+data.places.length+'</span></div><div>'+p.d+'</div>'}
@@ -218,8 +279,9 @@ function initMapbox(box){
     tabs.forEach(function(t){var on=t.getAttribute('data-v')===v;t.classList.toggle('on',on);t.setAttribute('aria-selected',on)});
     Object.keys(views).forEach(function(k){if(views[k])views[k].classList.toggle('on',k===v)});
     if(v==='l'){
-      if(!liveP)liveP=liveMap(box,data,function(i){show(i,true)}).then(function(s){live=s||null;if(live&&cur>=0)live.focus(cur,false)});
-      else if(live&&live.map)setTimeout(function(){live.map.invalidateSize()},80);
+      if(box.__live&&box.__live.map){live=box.__live;setTimeout(function(){live.map.invalidateSize()},80);return}
+      if(!box.__armLive)armLive(box,data,show);
+      /* do not auto-start Leaflet during scroll or tab peek — user clicks the button */
     }
   }
   tabs.forEach(function(t){t.addEventListener('click',function(){view(t.getAttribute('data-v'))})});
@@ -236,9 +298,30 @@ function initMapbox(box){
   var cmap=box.querySelector('.cmap');
   if(cmap&&'IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){cmap.classList.toggle('play',e.isIntersecting);if(e.isIntersecting)cmap.classList.add('seen')})},{rootMargin:'0px 0px -10% 0px'});io.observe(cmap)}
 }
+function armLive(box, data, show){
+  var el=box.querySelector('.lmap');if(!el||el.dataset.armed)return;
+  el.dataset.armed='1';el.dataset.idle='1';
+  el.innerHTML='<div class="map-arm"><button type="button" class="ib" data-arm>📡 加载实时地图（多源瓦片，失败自动切换）</button><p>概念示意图与离线地形图已可离线使用。实时瓦片只在点击后加载，以免滚动时卡顿。</p></div>';
+  var btn=el.querySelector('[data-arm]');
+  function start(){
+    el.removeAttribute('data-idle');el.textContent='🗺️ 地图加载中…';
+    liveMap(box,data,function(i){show(i,true)}).then(function(s){box.__live=s||null;if(box.__live&&box.__cur>=0)box.__live.focus(box.__cur,false)});
+  }
+  if(btn)btn.addEventListener('click',start);
+  box.__armLive=start;
+}
+/* cheap wiring now; Leaflet only after explicit click. Do not init during scroll. */
 d.querySelectorAll('.mapbox').forEach(function(box){
-  if(!('IntersectionObserver' in window)){initMapbox(box);return}
-  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){io.unobserve(box);initMapbox(box)}})},{rootMargin:'400px 0px'});
-  io.observe(box);
+  var raw=box.querySelector('.mdata');
+  function wire(){
+    if(box.dataset.ready)return;box.dataset.ready='1';
+    initMapbox(box);
+  }
+  /* bind tabs immediately so first click works; initMapbox itself does not load Leaflet until live tab + arm */
+  wire();
 });
+if('IntersectionObserver' in window){
+  var playIO=new IntersectionObserver(function(es){es.forEach(function(e){e.target.classList.toggle('inview',e.isIntersecting);if(e.target.classList.contains('cmap'))e.target.classList.toggle('play',e.isIntersecting)})},{rootMargin:'0px',threshold:0.08});
+  d.querySelectorAll('.film,.era,.mind,.cmap,.zones-film').forEach(function(x){playIO.observe(x)});
+}
 })();

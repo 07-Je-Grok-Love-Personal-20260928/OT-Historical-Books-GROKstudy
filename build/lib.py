@@ -2,7 +2,7 @@
 import json, re, os, html as H, math
 import bible
 CCI = os.environ.get("CCI_DIR", "/workspace/cci")
-VER = "20261114-v2"
+VER = "20261114-v3"
 _h = json.load(open(f"{CCI}/heidelberg.json")); _b = json.load(open(f"{CCI}/belgic.json")); _d = json.load(open(f"{CCI}/dort.json")); CREEDS = json.load(open(f"{CCI}/creeds.json"))
 HCQ = {q["q"]: dict(q, ld=ld["number"], url=ld.get("url")) for ld in _h["lordsdays"] for q in ld["questions"]}
 BCA = {a["number"]: a for a in _b["articles"]}
@@ -41,6 +41,19 @@ def vt(ref): VUSED.append(ref); return bible.verses(ref)
 # ---------- components ----------
 def H2(id, ic, t, c="var(--blue)"): return f'<h2 id="{id}" style="--c:{c}">{ic} {t}</h2>'
 def H3(id, ic, t): return f'<h3 id="{id}">{ic} {t}</h3>'
+def H4(id, ic, t): return f'<h4 id="{id}">{ic} {t}</h4>'
+HIST_NAV = [
+    ("history", "⏳ 总览·年代"),
+    ("history-geo", "⛰️ 地理·陆桥"),
+    ("history-world", "🌍 帝国·列国"),
+    ("history-culture", "🎭 文化·考古"),
+]
+def hist_nav(cur):
+    links = "".join(
+        f'<a href="{s}.html"{" class=on" if s==cur else ""}>{lab}</a>'
+        for s, lab in HIST_NAV
+    )
+    return f'<nav class="subnav" aria-label="史地文化子栏目">{links}</nav>'
 def co(kind, title, body):
     return f'<div class="co {kind} reveal"><span class="ct">{title}</span>{body}</div>'
 KEY = lambda b, t="⭐ 重点": co("key", t, b)
@@ -127,37 +140,45 @@ def book(d):
     p = d["id"]; c = d.get("color", "var(--gold)"); o = []
     o.append(H2(p, d["icon"], d["name"], c))
     o.append(f'<p class="lead" style="font-size:1.08em">{d["lead"]}</p>')
-    o.append(H3(p + "-glance", "👁️", "一眼速览"))
-    o.append(grid([f'<div class="card reveal" style="--c:{c}"><h4>📌 基本资料</h4>{kv(d["glance"])}</div>',
-                   f'<div class="card reveal" style="--c:{c}"><h4>🔑 钥字 · 钥节</h4><p>{d["keys"]}</p>{"".join(V(v) for v in d["kv"])}</div>'], 320))
+    o.append(H3(p + "-intro", "👁️", "导读与速览"))
+    o.append(H4(p + "-glance", "📌", "一眼速览：基本资料"))
+    o.append(grid([f'<div class="card reveal" style="--c:{c}"><h4>📌 基本资料</h4>{kv(d["glance"])}</div>'], 320))
+    o.append(H4(p + "-keys", "🔑", "钥字 · 钥节"))
+    o.append(f'<div class="card reveal" style="--c:{c}"><h4>🔑 钥字 · 钥节</h4><p>{d["keys"]}</p>{"".join(V(v) for v in d["kv"])}</div>')
+    o.append(H4(p + "-mnem", "🧠", "记忆钩"))
     o.append(mnem(*d["mnem"]))
-    o.append(H3(p + "-why", "❓", "为什么写：前因与目的"))
+    o.append(H3(p + "-text", "🧭", "文本与故事"))
+    o.append(H4(p + "-why", "❓", "为什么写：前因与目的"))
     o.append(WHY(d["why"], "❓ 写作处境与目的"))
-    o.append(H3(p + "-what", "🧭", "写了什么：结构与故事线"))
+    o.append(H4(p + "-what", "🗂️", "结构大纲"))
     o.append(flow(d["outline"]))
+    o.append(H4(p + "-story", "📖", "故事线"))
     o.append(story(d["story"], c))
-    o.append(H3(p + "-time", "⏳", "时间线"))
+    o.append(H4(p + "-time", "⏳", "时间线"))
     o.append(tl(d["timeline"], cols=True))
+    o.append(H3(p + "-world", "🗺️", "地理与历史"))
     if d.get("maps"):
-        o.append(H3(p + "-map", "🗺️", "地理位置（地图）"))
+        o.append(H4(p + "-map", "🗺️", "地理位置（地图）"))
         o.append(d.get("mapintro", ""))
         for m in d["maps"]: o.append(MAP(m))
-    o.append(H3(p + "-bg", "🏺", "真实历史背景与文化区域特征"))
+    o.append(H4(p + "-bg", "🏺", "真实历史背景与文化区域特征"))
     o.append(grid(d["bg"], 280))
     if d.get("extra"): o.append(d["extra"])
-    o.append(H3(p + "-cov", "🔗", "圣经神学 · 圣约神学"))
+    o.append(H3(p + "-theo", "🔗", "神学解读"))
+    o.append(H4(p + "-cov", "🔗", "圣经神学 · 圣约神学"))
     o.append(d["cov"])
-    o.append(H3(p + "-xp", "✝️", "指向基督"))
+    o.append(H4(p + "-xp", "✝️", "指向基督"))
     o.append(d["christ"])
-    o.append(H3(p + "-hard", "⚠️", "难点剖析"))
+    o.append(H4(p + "-hard", "⚠️", "难点剖析"))
     o.append("".join(HARD(b, "⚠️ 难点：" + t) for t, b in d["hard"]))
-    o.append(H3(p + "-conf", "📜", "信条对照（三项联合信条 · 逐字）"))
+    o.append(H4(p + "-conf", "📜", "信条对照（三项联合信条 · 逐字）"))
     o.append(d["conf"])
-    o.append(H3(p + "-angles", "🔭", "多角度解读"))
+    o.append(H4(p + "-angles", "🔭", "多角度解读"))
     o.append(grid([card(t, f"<p>{b}</p>", ic, PALC[i % 8]) for i, (ic, t, b) in enumerate(d["angles"])], 250))
-    o.append(H3(p + "-apply", "🌱", "如何应用"))
+    o.append(H3(p + "-live", "🌱", "应用与记诵"))
+    o.append(H4(p + "-apply", "🌱", "如何应用"))
     o.append(APP("<ol>" + "".join(f"<li>{a}</li>" for a in d["apply"]) + "</ol>", "🌱 今日应用（先信神所作，再行神所命）"))
-    o.append(H3(p + "-quiz", "✅", "小测验"))
+    o.append(H4(p + "-quiz", "✅", "小测验"))
     o.append(quiz(d["quiz"], p + "-q"))
     return "".join(o)
 MAP = None

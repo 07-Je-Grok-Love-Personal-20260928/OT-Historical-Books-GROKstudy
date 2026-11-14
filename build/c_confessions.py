@@ -44,21 +44,26 @@ def body():
     o.append('''<section class="hero reveal"><div class="kick">THREE FORMS OF UNITY × HISTORICAL BOOKS</div><h1>📚 三项联合信条对照</h1>
 <p class="lead">欧陆改革宗教会以<b class="k">三项联合信条</b>（比利时信条、海德堡要理问答、多特信经）为信仰标准。本页把十二卷历史书的主要主题与信条条文逐一对照；所有引文都<b class="k">一字不差</b>取自 ccifellowship.org，并经程序逐条比对。</p></section>''')
     o.append(H2("conf-what", "🧾", "三项联合信条是什么？", "var(--gold)"))
+    o.append(H3("conf-what-three", "🧾", "三份文件一览"))
     o.append(table(["信条", "年代 · 作者", "背景", "结构", "与历史书的关系"], [
         [("m", "<b>比利时信条</b>"), "1561 · 德布雷（Guido de Brès）", "在西班牙逼迫下写给国王，证明改革宗信徒不是暴乱分子", "37 条", "第4条列出正典；第13条护理；第36条官员"],
         [("m", "<b>海德堡要理问答</b>"), "1563 · 乌尔西努、奥利维亚努", "普法尔茨选侯腓特烈三世为教导青年与牧者而编", "52 主日 · 129 问", "罪—救恩—感恩；十诫部分大量取材于历史书"],
         [("m", "<b>多特信经</b>"), "1618–1619 · 多特大会", "回应抗辩派（阿民念派）五点", "五项教义（第三、四项合并）", "拣选、全然败坏、坚忍——大卫的例子直接被引用"]]))
+    o.append(H3("conf-what-hc", "📖", "海德堡的三部结构"))
     o.append(flow([("罪与苦难", "HC 3–11 · 士师记的螺旋", "var(--red)"), ("救赎", "HC 12–85 · 大卫之约 → 基督", "var(--gold)"), ("感恩", "HC 86–129 · 十诫、祷告、圣洁生活", "var(--green)")]))
     o.append(H2("conf-map", "🗺️", "主题总对照表", "var(--teal)"))
+    o.append(H3("conf-map-table", "🗺️", "主题 × 三项信条"))
     rows = [[f'<a href="#t-{k}">{ic} {t}</a>', ex, ("g", hc), ("g", bc), ("g", cd)] for k, ic, t, ex, hc, bc, cd, c, qs, app in THEMES]
     o.append(table(["主题", "历史书中的例子", "海德堡", "比利时", "多特"], rows))
     o.append('<p class="mut" style="font-size:.9em">数字为条/问编号；“1.6”指多特信经第一项教义第6条，“5.3”指第五项教义第3条。</p>')
     o.append(H2("conf-themes", "🔍", "逐主题对照", "var(--purple)"))
+    o.append(H3("conf-themes-how", "🔍", "每个主题：例子 · 引文 · 应用"))
     for k, ic, t, ex, hc, bc, cd, c, qs, app in THEMES:
         o.append(H3("t-" + k, ic, t))
         o.append(f'<div class="card reveal" style="--c:{c}"><p>📍 <b>历史书例子：</b>{ex}</p></div>')
         o += [q for q in qs if q]
         o.append(APP(f"<p>{app}</p>", "🔗 读历史书时怎样用"))
     o.append(H2("conf-wcf", "🌐", "与威斯敏斯特标准的关系"))
+    o.append(H3("conf-wcf-note", "🌐", "本站只作转述"))
     o.append(BG('<p>本站以三项联合信条为标准。威斯敏斯特信条（1646）在圣经、护理、圣约（行为之约/恩典之约）等教义上与之一致，对“恩典之约在旧约时期借着应许、预言、献祭……施行”的阐述尤其有助于读历史书。为避免误引，本站对威斯敏斯特标准只作<b>转述</b>，不作逐字引用。</p>', "🌐 说明"))
     return "".join(o)

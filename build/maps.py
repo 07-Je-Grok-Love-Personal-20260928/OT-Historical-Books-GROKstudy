@@ -153,6 +153,24 @@ S(id="heartland", title="犹大山地心脏：圣殿、京城与四周关隘", b
     M("ela","以拉谷","Valley of Elah",34.97,31.68,"撒上17","大卫击杀歌利亚——山地与沿海之间的谷口。","green")],
   water=[("盐海",35.48,31.40)],
   rcap="放大犹大山地：圣殿在海拔约750米的山梁上；西有示非拉谷口（以拉、拉吉），东有下到耶利哥的陡坡")
+# 11 五条纵带
+S(id="zones", title="迦南五条纵带：沿海平原 → 示非拉 → 中央山地 → 裂谷 → 外约旦", bbox=(34.15, 36.45, 30.85, 33.35), fine=True, fs=16,
+  markers=[M("gaz","迦萨（沿海）","Gaza",34.46,31.50,"非利士","沿海平原南门；国际大道由此北上。","red"),
+    M("asd","亚实突","Ashdod",34.65,31.80,"非利士","五城之一；约柜曾停于此。","red"),
+    M("ela","以拉谷（示非拉）","Valley of Elah",34.97,31.68,"缓冲带","山地与沿海之间的谷口；大卫与歌利亚。","orange",True),
+    M("lac","拉吉","Lachish",34.85,31.56,"示非拉关隘","犹大西南门；亚述与巴比伦都先攻此处。","orange"),
+    M("jeru","耶路撒冷（中央山地）","Jerusalem",35.23,31.78,"心脏","海拔约750米；圣殿所在，不在国际大道上。","gold",True),
+    M("she","示剑","Shechem",35.28,32.21,"以法莲山地","立约与分裂都发生在此地。","gold"),
+    M("jer","耶利哥（裂谷）","Jericho",35.44,31.87,"约旦河谷","地表最低带的东门；过河后第一座城。","teal",True),
+    M("dsea","盐海","Dead Sea",35.50,31.50,"裂谷","约 −430 米，地表最低。","teal"),
+    M("moa","摩押（外约旦）","Moab",35.75,31.35,"高原","路得的故乡；君王大道经过。","purple"),
+    M("rbt","拉巴（亚扪）","Rabbah",35.93,31.95,"君王大道","外约旦北段要邑。","purple"),
+    M("meg","米吉多","Megiddo",35.18,32.59,"沿海北口","沿海大道进入耶斯列谷的咽喉。","green",True)],
+  regions=[("沿海平原",34.70,32.10,.18,.7,"green"),("示非拉",34.95,31.70,.14,.28,"orange"),("中央山地",35.22,31.95,.16,.55,"gold"),
+           ("约旦河谷",35.50,31.90,.10,.7,"teal"),("外约旦高原",35.90,31.80,.22,.7,"purple")],
+  water=[("大海",34.40,32.55),("盐海",35.52,31.40)],
+  rcap="五条南北向地带从西到东并列：沿海（国际大道、非利士）→ 示非拉（谷口战场）→ 中央山地（以色列的心脏）→ 裂谷（耶利哥、盐海）→ 外约旦（君王大道）。色块为示意范围")
+
 # 10 文化区域
 S(id="culture", title="古近东文化区域：历史书的列国舞台", bbox=(28.5, 56.0, 23.5, 39.5), fs=19,
   markers=[M("mem","埃及（孟斐斯）","Egypt",31.25,29.85,"文明古国","尼罗河灌溉、法老王权、多神庙宇；以色列在此为奴，后又常向埃及求援。","blue",True),
@@ -174,7 +192,7 @@ def build(outdir, ver):
         W = 1000 if sp["bbox"][1]-sp["bbox"][0] < 10 else 1200
         svg, w, h, hs = rmap.real_svg(sp, W)
         # 动态：路线虚线流动（SVG 内 CSS；尊重减少动态）
-        svg = svg.replace('</defs>', '</defs><style>path[marker-end]{animation:fl 1.6s linear infinite}@keyframes fl{to{stroke-dashoffset:-26}}@media (prefers-reduced-motion:reduce){path[marker-end]{animation:none}}</style>', 1)
+        # 静态 <img> 中的 SVG 动画无法在滚出视口时暂停，故不写入动画样式
         open(os.path.join(outdir, k + ".svg"), "w").write(svg)
         out[k] = (sp, w, h, hs)
     return out
@@ -204,8 +222,8 @@ def html(k, built, ver):
             f'<div class="mview mv-g"><div class="gmap-inner"><div class="gm-bar"><span>Natural Earth 地形底图</span><span class="gm-z"><button type="button" data-z="-1" aria-label="缩小">－</button><button type="button" data-z="0" aria-label="复位">⟲</button><button type="button" data-z="1" aria-label="放大">＋</button></span></div>'
             f'<div class="gm-view"><div class="gm-in" style="aspect-ratio:{w}/{h}"><img src="assets/maps/{k}.svg?v={ver}" width="{w}" height="{h}" loading="lazy" decoding="async" alt="{t}">{hsb}</div></div></div>'
             f'<p class="map-note">公有领域地形（Natural Earth），本站预绘为静态 SVG，无瓦片、无 CDN；地点为通行历史地理认定（部分为“约”）。{cap}</p></div>'
-            f'<div class="mview mv-l"><div class="lmap" role="application" aria-label="{t} 交互地图">🗺️ 滚动到此处或点选本标签后加载交互地图…</div>'
-            f'<p class="map-note">默认自动选择可用瓦片（OpenStreetMap、CARTO、Esri、OpenTopoMap 等，均无需密钥）；某一源失败或超时将自动切换。全部失败时保留本站离线矢量底图与地点标记。首次加载Leaflet库（已自托管，无 CDN）。</p></div>'
+            f'<div class="mview mv-l"><div class="lmap" data-idle role="application" aria-label="{t} 交互地图"><div class="map-arm"><button type="button" class="ib" data-arm>📡 加载实时地图（多源瓦片，失败自动切换）</button><p>概念示意图与离线地形图已可离线使用。实时瓦片只在点击后加载，以免滚动时卡顿。</p></div></div>'
+            f'<p class="map-note">16 种无需密钥的瓦片源（OpenStreetMap、OSM 德/法、HOT、CyclOSM、CARTO 浅/深/Voyager、Esri 卫星/地形/街道/自然/晕渲/浅灰/国家地理、OpenTopoMap）。失败或超时自动切换；全部失败则保留离线矢量底图。Leaflet 自托管，仅在点击后加载。</p></div>'
             f'<div class="minfo">点按编号或下方列表，查看该地在历史书中的意义。</div>'
             f'<ol class="gm-leg">{li}</ol>'
             f'<script type="application/json" class="mdata">{data}</script></figure>')

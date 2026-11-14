@@ -7,7 +7,7 @@ BASE = sys.argv[1] if len(sys.argv)>1 else "file://"+D
 PAGES = [f[:-5] for f in sorted(os.listdir(D)) if f.endswith(".html")]
 WS = [360, 390, 430, 768, 1024, 1440, 1920]
 JS = """()=>{const vw=document.documentElement.clientWidth;const o=[];
-document.querySelectorAll('body *').forEach(e=>{if(e.closest('.tw,.scrollx,svg,.toc,.nav,nav,pre,.mapwrap,.gm-view,.lmap,.leaflet-container,.era,.profile,.mind,.hscroll,.clouds,.cmap,.film-art'))return;const r=e.getBoundingClientRect();
+document.querySelectorAll('body *').forEach(e=>{if(e.closest('.tw,.scrollx,svg,.toc,.toc-resizer,.toc-scroll,.nav,nav,pre,.mapwrap,.gm-view,.lmap,.leaflet-container,.era,.profile,.mind,.hscroll,.clouds,.cmap,.film-art,.subnav'))return;const r=e.getBoundingClientRect();
 if(r.width&&(r.right>vw+2||r.left<-2)){const cs=getComputedStyle(e);if(cs.position!=='fixed'&&cs.visibility!=='hidden'&&cs.display!=='none')o.push(e.tagName+'.'+(e.className||'').toString().slice(0,40)+' '+Math.round(r.left)+'-'+Math.round(r.right))}});
 const ids=new Set([...document.querySelectorAll('[id]')].map(e=>e.id));
 const miss=[...document.querySelectorAll('a[href^="#"]')].map(a=>a.getAttribute('href').slice(1)).filter(h=>h&&!ids.has(h));
@@ -32,7 +32,14 @@ with sync_playwright() as p:
                   const lg=document.getElementById('legBtn'); if(lg){lg.click(); lg.click();}
                   const th=document.getElementById('thBtn'); if(th){th.click(); th.click();}
                   document.querySelectorAll('details.more').forEach(d=>{d.open=true;d.open=false;d.open=true});
-                  document.querySelectorAll('.toc .tg').forEach((b,i)=>{if(i<3)b.click()});
+                  document.querySelectorAll('.toc .l1 > .grp .tg, .toc .l2 > .grp .tg').forEach((b,i)=>{if(i<8)b.click()});
+                  const rz=document.getElementById('tocResize');
+                  if(rz){
+                    const w=getComputedStyle(document.documentElement).getPropertyValue('--tocw');
+                    document.documentElement.style.setProperty('--tocw','220px');
+                    document.documentElement.style.setProperty('--tocw','640px');
+                    document.documentElement.style.setProperty('--tocw', w.trim()||'320px');
+                  }
                   const fl=document.querySelector('.film [data-a=n], .story [data-a=n]'); if(fl){fl.click();fl.click();}
                   const q=document.querySelector('.quiz .qq button.o'); if(q)q.click();
                   const f=document.querySelector('.flip'); if(f){f.click();f.click();}
@@ -44,10 +51,10 @@ with sync_playwright() as p:
             bad += bool(fail); out[f"{pg_}@{w}"]=r
             print(("❌" if fail else "✅"), pg_, w, "" if not fail else r)
             page.close()
-    # interaction + tile block on history (has multiple maps)
+    # interaction + tile block on history-geo (has multiple maps)
     page=b.new_page(viewport={"width":1440,"height":900})
-    page.route(re.compile(r"tile\.openstreetmap|basemaps\.cartocdn|arcgisonline|opentopomap|tile-cyclosm|openstreetmap\.fr"), lambda route: route.abort())
-    page.goto(url("history"), wait_until="domcontentloaded")
+    page.route(re.compile(r"tile\.openstreetmap|basemaps\.cartocdn|arcgisonline|opentopomap|tile-cyclosm|openstreetmap\.fr|openstreetmap\.de"), lambda route: route.abort())
+    page.goto(url("history-geo"), wait_until="domcontentloaded")
     page.evaluate("document.querySelectorAll('.reveal').forEach(e=>e.classList.add('in'))")
     # open first live map tab
     page.wait_for_timeout(400)
@@ -58,8 +65,11 @@ with sync_playwright() as p:
         page.locator('.mapbox').first.scroll_into_view_if_needed()
         page.wait_for_timeout(400)
         tabs.first.click()
+        page.wait_for_timeout(200)
+        arm=page.locator('.mapbox [data-arm]').first
+        if arm.count(): arm.click()
         try:
-            page.wait_for_selector('.mapbox .mctl select', timeout=8000)
+            page.wait_for_selector('.mapbox .mctl select', timeout=10000)
         except Exception as e:
             info['wait_err']=str(e)
         page.wait_for_timeout(2500)

@@ -8,13 +8,13 @@ MAPS = maps.build(os.path.join(OUT, "assets", "maps"), lib.VER)
 lib.MAPS = MAPS
 lib.MAP = lambda k: maps.html(k, MAPS, lib.VER)
 DESC = {"index": "旧约历史书（约书亚记—以斯帖记）欧陆改革宗深读：时间线、故事线、地图、圣约神学、三项联合信条与三大信经",}
-TITLES = {"index": "首页", "bible": "从整本圣经看历史书", "history": "史地与古近东文化", "joshua": "约书亚记", "judges": "士师记 · 路得记", "samuel": "撒母耳记上下",
+TITLES = {"index": "首页", "bible": "从整本圣经看历史书", "history": "史地总览 · 年代学", "history-geo": "地理：陆桥、五带与心脏", "history-world": "帝国、被掳与列国", "history-culture": "文化区域与考古", "joshua": "约书亚记", "judges": "士师记 · 路得记", "samuel": "撒母耳记上下",
           "kings": "列王纪上下", "chronicles": "历代志上下", "return": "以斯拉记 · 尼希米记 · 以斯帖记", "confessions": "三项联合信条对照", "creeds": "三大普世信经 · 阅读背诵版",
           "compare": "三大信经深度对比", "memory": "速记与自测", "sources": "来源与核对"}
 only = sys.argv[1:]
 for slug, _ in layout.PAGES:
     if only and slug not in only: continue
-    try: m = importlib.import_module("c_" + slug)
+    try: m = importlib.import_module("c_" + slug.replace("-", "_"))
     except ModuleNotFoundError: print("skip", slug); continue
     html = layout.page(slug, TITLES[slug], m.body(), DESC.get(slug, TITLES[slug] + " · 旧约历史书 欧陆改革宗深读"))
     open(os.path.join(OUT, slug + ".html"), "w").write(html); print("wrote", slug, len(html))

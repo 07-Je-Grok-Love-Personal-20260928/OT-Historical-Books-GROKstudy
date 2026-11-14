@@ -6,6 +6,7 @@ def body():
     o.append('''<section class="hero reveal"><div class="kick">SOURCES · VERIFICATION · VERSION</div><h1>🔖 来源与核对</h1>
 <p class="lead">本站所有信条与信经引文均取自 <b class="k">ccifellowship.org</b>（华人改革宗团契 · 加拿大归正教会《赞美诗集》中文版），经文取自<b class="k">和合本</b>；每条引文在构建与发布前由程序逐字比对。</p></section>''')
     o.append(H2("src-cci", "📜", "信条与信经原文来源", "var(--gold)"))
+    o.append(H3("src-cci-table", "📜", "文献与用法"))
     o.append(table(["文献", "网址", "本站用法"], [
         ["比利时信条（37条）", '<a href="https://ccifellowship.org/books/book-of-praise/confessions/the-belgic-confession" target="_blank" rel="noopener">ccifellowship.org/…/the-belgic-confession</a>', "逐字引用（整条或连续片段）"],
         ["海德堡要理问答（129问）", '<a href="https://ccifellowship.org/books/book-of-praise/confessions/heidelberg-catechism" target="_blank" rel="noopener">ccifellowship.org/…/heidelberg-catechism</a>', "逐字引用问与答"],
@@ -15,18 +16,22 @@ def body():
         ["亚他那修信经", '<a href="https://ccifellowship.org/books/book-of-praise/creeds/athanasian-creed" target="_blank" rel="noopener">ccifellowship.org/…/athanasian-creed</a>', "全文 + 简介逐字"],
         ["《圣经故事》第二册（CCI）", '<a href="https://ccifellowship.org" target="_blank" rel="noopener">ccifellowship.org</a>', "各卷“延伸阅读”章节链接"],
         ["CCI 讲道文本", '<a href="https://ccifellowship.org/sermons" target="_blank" rel="noopener">ccifellowship.org/sermons</a>', "相关讲道链接（撒母耳记、列王纪）"]]))
+    o.append(H3("src-cci-rules", "⭐", "逐字规则"))
     o.append(KEY('<p>引文处理规则：① 只省略原网页的<b>脚注上标编号</b>；② 片段引用时，在省略处加“……”；③ 不改字、不改标点，连原文中的特殊空格也保留；④ 威斯敏斯特标准只作转述，不作引号引用。</p>', "⭐ 逐字规则"))
     o.append(H2("src-verify", "🧪", "怎样核对", "var(--green)"))
+    o.append(H3("src-verify-flow", "🧪", "四步核验"))
     o.append(flow([("① 抓取", "CCI 网页 → JSON（比利时 37 · 海德堡 129 · 多特 · 三信经）", "var(--gold)"), ("② 构建断言", "每个引文片段 assert 必须是原文子串，否则构建失败", "var(--red)"), ("③ 发布后核验", "tools/verify_quotes.py 解析成品 HTML，逐条再比对", "var(--green)"), ("④ 信经全文", "背诵版逐行拼接 == 原文（逐字相等）", "var(--blue)")]))
     n = len({u["key"] for u in lib.USED})
     o.append(f'<p>本次构建共登记引文 <b class="k">{len(lib.USED)}</b> 处（不同条目 {n} 个）——见仓库 <code>build/data/quotes_used.json</code> 与 <code>build/data/verify_report.json</code>。</p>')
     o.append(H2("src-bible", "📖", "圣经与史地资料", "var(--blue)"))
+    o.append(H3("src-bible-table", "📖", "经文、年代、地图、考古"))
     o.append(table(["类别", "来源", "说明"], [
         ["经文", "《和合本》（CUS，getbible 数据）", "经文引用由程序按章节取出，未改字"],
         ["年代", "早期出埃及说（王上6:1）；列王年代采用 Thiele 体系（略有调整）", "约数以“约”标示；不同学者±1–10年"],
-        ["地图", "① 概念示意图（本站原创 SVG，离线）；② Natural Earth 公有领域地形静态图（离线）；③ Leaflet 实时地图，自托管库，多源无密钥瓦片（OSM、CARTO、Esri、OpenTopoMap 等），失败/超时自动切换，全部失败则保留离线矢量底图", "古地名位置为通行历史地理认定（部分为“约”）；路线为示意方向"],
+        ["地图", "① 概念示意图（本站原创 SVG，离线）；② Natural Earth 公有领域地形静态图（离线）；③ Leaflet 实时地图，自托管库，多源无密钥瓦片（OSM、OSM 德/法、HOT、CyclOSM、CARTO、Esri 卫星/地形/街道/自然/晕渲/浅灰/国家地理、OpenTopoMap 等）；实时图层需点击加载，失败/超时自动切换，全部失败则保留离线矢量底图", "古地名位置为通行历史地理认定（部分为“约”）；路线为示意方向"],
         ["考古与古近东", "米尼普塔石碑、但丘石碑、米沙石碑、撒缦以色黑色方尖碑、西拿基立棱柱、古列圆柱等", "作为佐证，不作信仰根基"]]))
     o.append(H2("src-ref", "🌐", "参考的改革宗网站", "var(--purple)"))
+    o.append(H3("src-ref-list", "🌐", "欧陆与长老会资源"))
     o.append(grid([card(t, f'<p><a href="{u}" target="_blank" rel="noopener">{u.replace("https://","")}</a></p><p class="mut">{d}</p>', ic, c) for t, u, ic, d, c in [
         ("CCI 华人改革宗团契", "https://ccifellowship.org", "📜", "信条、信经、圣经故事、讲道（本站唯一逐字来源）", "var(--gold)"),
         ("加拿大归正教会 CanRC", "https://canrc.org", "🇨🇦", "《赞美诗集》与三项联合信条", "var(--red)"),
@@ -37,8 +42,10 @@ def body():
         ("改革宗入门 reformedbeginner", "https://www.reformedbeginner.net", "🌱", "中文改革宗入门资料", "var(--pink)"),
         ("ccreformed", "https://www.ccreformed.org", "📗", "中文改革宗资源", "var(--gold)")]], 250))
     o.append(H2("src-ver", "🗂️", "版本记录", "var(--teal)"))
+    o.append(H3("src-ver-table", "🗂️", "v1 · v2 · v3"))
     o.append(table(["版本", "日期（台北时间）", "说明"], [
-        [("g", "v2.0（20261114-v2）"), "2026-11-14", "地图升级为「概念图 + 离线地形图 + 多源实时瓦片（自动故障切换、懒加载）」共 10 幅；新增陆桥、心脏、文化圈地图与征服/分裂/被掳/总弧短片动画；笔记标记系统扩展（重点/难点/基督/圣约/记忆/年代/地名/人物）；滚动与动画性能优化（去掉滚动元素的 backdrop-filter、content-visibility、自托管资源、View Transitions、预取）；多宽度 QA 与瓦片阻断测试"],
+        [("g", "v3.0（20261114-v3）"), "2026-11-14", "三级目录（可折叠、状态记忆、滚动高亮并自动展开上级）；目录面板可左右拖动加宽（宽度记忆，触控与键盘可用，手机为可加宽的抽屉）；史地拆为四页并新增「五条纵带」地图（共 11 幅）；实时地图改为点击后再加载，避免滚动中初始化；离屏暂停 SVG 动画；新增无密钥瓦片源；笔记标记增加「总纲」金条；滚动性能针对史地页再优化"],
+        [("m", "v2.0（20261114-v2）"), "2026-11-14", "地图升级为「概念图 + 离线地形图 + 多源实时瓦片（自动故障切换、懒加载）」共 10 幅；新增陆桥、心脏、文化圈地图与征服/分裂/被掳/总弧短片动画；笔记标记系统扩展（重点/难点/基督/圣约/记忆/年代/地名/人物）；滚动与动画性能优化（去掉滚动元素的 backdrop-filter、content-visibility、自托管资源、View Transitions、预取）；多宽度 QA 与瓦片阻断测试"],
         [("m", "v1.0（20261023-v1）"), "2026-10-23", "首次发布：14 页；整本圣经视角、史地文化、十二卷逐卷深读、7 幅地图、三项联合信条对照、三大信经背诵版与深度对比、速记自测、来源核对"]]))
     o.append(BG('<p>本站为学习辅助材料，不能取代教会的讲道、教导与牧养。若发现错误，请在 GitHub 仓库提交 Issue。</p>', "📝 说明"))
     return "".join(o)
