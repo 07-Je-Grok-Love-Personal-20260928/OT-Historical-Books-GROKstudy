@@ -19,19 +19,42 @@ def toc(body):
             out.append(f'<li class="l2 has"><div class="grp"><a href="#{id}">{t}</a><button class="tg" aria-label="展开/收起" aria-expanded="true">▼</button></div><ol>{sub}</ol></li>')
         else: out.append(f'<li class="l2"><a href="#{id}">{t}</a></li>')
     return "".join(out)
+def wrap_blk(body):
+    parts=re.split(r'(?=<h2\b)', body, flags=re.I)
+    out=[]
+    for i,ch in enumerate(parts):
+        if not ch.strip(): continue
+        out.append(f'<section class="blk" data-i="{i}">{ch}</section>')
+    return "".join(out)
 def page(slug, title, body, desc=""):
     nav = "".join(f'<a href="{s}.html"{" class=on" if s == slug else ""}>{t}</a>' for s, t in PAGES)
     i = [s for s, _ in PAGES].index(slug)
     pv = PAGES[i - 1] if i > 0 else None; nx = PAGES[i + 1] if i + 1 < len(PAGES) else None
     pager = '<nav class="pager">' + (f'<a href="{pv[0]}.html"><small>← 上一页</small>{pv[1]}</a>' if pv else "<span></span>") + (f'<a href="{nx[0]}.html"><small>下一页 →</small>{nx[1]}</a>' if nx else "") + "</nav>"
+    body = wrap_blk(body)
     tc = toc(body)
     return f'''<!doctype html><html lang="zh-Hans" data-theme="night"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>{H.escape(title)} · {TITLE}</title><meta name="description" content="{H.escape(desc or title)}"><meta name="theme-color" content="#0b1020">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📜%3C/text%3E%3C/svg%3E">
 <script>(function(h){{h.classList.add('js');try{{var t=localStorage.getItem('otb.theme');if(t)h.setAttribute('data-theme',t);if(localStorage.getItem('otb.toc')==='off')h.classList.add('toc-off')}}catch(e){{}}}})(document.documentElement)</script>
 <link rel="stylesheet" href="assets/site.css?v={VER}"></head><body>
+<div class="clouds" aria-hidden="true"><i style="--c:rgba(90,169,255,.55);--s:420px;--x:-8%;--y:-6%;--t:32s"></i><i style="--c:rgba(242,193,78,.4);--s:360px;--x:72%;--y:8%;--t:26s"></i><i style="--c:rgba(169,139,255,.45);--s:480px;--x:40%;--y:70%;--t:38s"></i></div>
 <div class="prog" aria-hidden="true"></div>
-<header class="top"><button class="ib" id="tocBtn" aria-label="显示/隐藏目录">☰ <small>目录</small></button><a class="brand" href="index.html">📜 <span>{TITLE}</span></a><nav class="nav" aria-label="页面">{nav}</nav><button class="ib" id="thBtn" aria-label="切换深色/羊皮纸主题">🌓</button></header>
+<header class="top"><button class="ib" id="tocBtn" aria-label="显示/隐藏目录">☰ <small>目录</small></button><a class="brand" href="index.html">📜 <span>{TITLE}</span></a><nav class="nav" aria-label="页面">{nav}</nav>
+<div class="legpop"><button class="ib" id="legBtn" aria-expanded="false" aria-label="笔记标记图例">🖍 <span class="lab">标记</span></button>
+<div class="panel" role="note"><strong>笔记标记图例</strong>
+<div class="legend" style="margin:8px 0 0;padding:0;border:0;background:none">
+<span><b class="k">重点</b>＝金色底纹</span>
+<span><b class="h">难点</b>＝红色波浪线</span>
+<span><b class="xr">指向基督</b>＝粉色实线</span>
+<span><b class="cv">圣约</b>＝青色虚线</span>
+<span><b class="mm">记忆钩</b>＝紫色点线</span>
+<span><span class="d">年代</span></span>
+<span><span class="pl">地名</span></span>
+<span><span class="pn">人物</span></span>
+<span><span class="vr">经文</span></span>
+</div></div></div>
+<button class="ib" id="thBtn" aria-label="切换深色/羊皮纸主题">🌓</button></header>
 <div class="wrap"><aside class="toc" aria-label="本页目录"><h5>本页目录 · {H.escape(title)}</h5><input id="tocQ" type="search" placeholder="🔍 筛选目录…" aria-label="筛选目录"><div class="tools"><button class="ib" id="tocAll">⇅ 全部展开/收起</button></div><ol>{tc}</ol></aside><div class="scrim"></div>
 <main id="main">{body}{pager}</main></div>
 <footer>📜 {TITLE} · 版本 {VER} · GROKstudy｜三大普世信经与三项联合信条引文逐字取自 <a href="https://ccifellowship.org" target="_blank" rel="noopener">ccifellowship.org</a>（脚注编号省略）；经文为和合本。其余讲解为本站学习概述。<a href="sources.html">来源与核对 →</a></footer>

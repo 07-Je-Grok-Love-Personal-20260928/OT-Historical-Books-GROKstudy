@@ -121,6 +121,53 @@ S(id="persia", title="以斯帖记的世界：“从印度直到古实”的波�
   regions=[("印度（印度河流域）",69.5,27.0,3.2,4.0,"pink"),("古实（努比亚）",32.5,18.5,3.0,3.5,"orange")],
   water=[("地中海",19.0,35.0),("波斯湾",51.5,26.8),("阿拉伯海",63.0,20.0)],
   rcap="斯1:1 一百二十七省；粉色与橙色示意帝国的东西（南）两端")
+# 8 陆桥与两条大道
+S(id="landbridge", title="迦南陆桥：沿海大道（Via Maris）与君王大道", bbox=(29.5, 45.5, 27.5, 37.5), fs=18,
+  markers=[M("mem","孟斐斯","Memphis",31.25,29.85,"埃及","下埃及的中心；出埃及与后期法老势力的参照点。","blue"),
+    M("gaz","迦萨","Gaza",34.46,31.50,"沿海南门","非利士五城之南；沿海大道由此北上。","red"),
+    M("meg","米吉多","Megiddo",35.18,32.59,"关隘","沿海大道进入耶斯列谷的咽喉；约西亚战死于此。","orange",True),
+    M("haz","夏琐","Hazor",35.57,33.02,"北关","北部要冲，控制通往大马士革与美索不达米亚的道路。","orange"),
+    M("tyr","推罗","Tyre",35.20,33.27,"腓尼基","香柏木与紫色染料；海上贸易枢纽。","teal"),
+    M("dam","大马士革","Damascus",36.29,33.51,"亚兰","内陆商路枢纽；君王大道与美索不达米亚相连。","blue",True),
+    M("jeru","耶路撒冷","Jerusalem",35.23,31.78,"山地心脏","不在国际大道上，却是神立名的地方。","gold",True),
+    M("rbt","拉巴（亚扪）","Rabbah",35.93,31.95,"君王大道","亚扪都城；大道沿外约旦北上。","purple"),
+    M("bos","波斯拉（以东）","Bozrah",35.73,30.74,"君王大道南","以东要邑。","purple"),
+    M("car","迦基米施","Carchemish",38.01,36.83,"幼发拉底","埃及与巴比伦争霸之地（605）。","gray")],
+  lines=[("沿海大道（Via Maris）",[(32.3,31.0),(34.46,31.50),(34.9,32.2),(35.18,32.59),(35.57,33.02),(36.29,33.51)],"green"),
+         ("君王大道",[(35.73,30.74),(35.75,31.35),(35.93,31.95),(36.2,32.8),(36.29,33.51),(38.01,36.83)],"purple")],
+  water=[("地中海",32.6,33.2),("红海",34.5,28.6)],
+  rcap="绿虚线：沿海大道（国际商路，非利士与米吉多）；紫虚线：君王大道（外约旦，通往大马士革与两河流域）。耶路撒冷偏在中央山地，不在两条干道上")
+# 9 犹大心脏
+S(id="heartland", title="犹大山地心脏：圣殿、京城与四周关隘", bbox=(34.55, 35.70, 31.25, 32.25), fine=True, fs=17,
+  markers=[M("jeru","耶路撒冷（圣殿）","Jerusalem",35.23,31.78,"撒下5; 王上8","大卫攻取锡安，所罗门建殿；主前586年被焚，516年第二圣殿完工。","gold",True),
+    M("bet","伯利恒","Bethlehem",35.20,31.70,"得4; 撒上16","大卫与路得的城，弥赛亚将出生之地。","gold"),
+    M("heb","希伯仑","Hebron",35.10,31.53,"撒下2","大卫作犹大王七年半；列祖坟墓所在。","green"),
+    M("gib","基遍","Gibeon",35.18,31.85,"书10; 王上3","日头停留；所罗门在此求智慧。","blue"),
+    M("gbs","基比亚","Gibeah of Saul",35.23,31.82,"撒上10–15","扫罗的王城。","purple"),
+    M("ram","拉玛","Ramah",35.23,31.85,"撒上7–8","撒母耳之家；百姓在此求王。","orange"),
+    M("miz","米斯巴","Mizpah",35.23,31.89,"撒上7; 王下25","撒母耳招聚以色列；被掳后省长基大利驻此。","orange"),
+    M("betl","伯特利","Bethel",35.22,31.93,"王上12:29","北国金牛犊南端——距圣殿仅十余公里。","red"),
+    M("jer","耶利哥","Jericho",35.44,31.87,"书6","裂谷中的棕树城，进入山地的东门。","teal"),
+    M("lac","拉吉","Lachish",34.85,31.56,"王下18","西南关隘；亚述与巴比伦都先攻此处再逼京城。","red",True),
+    M("bsh","伯示麦","Beth-shemesh",34.98,31.75,"撒上6","示非拉的门口；约柜由此回来。","blue"),
+    M("ela","以拉谷","Valley of Elah",34.97,31.68,"撒上17","大卫击杀歌利亚——山地与沿海之间的谷口。","green")],
+  water=[("盐海",35.48,31.40)],
+  rcap="放大犹大山地：圣殿在海拔约750米的山梁上；西有示非拉谷口（以拉、拉吉），东有下到耶利哥的陡坡")
+# 10 文化区域
+S(id="culture", title="古近东文化区域：历史书的列国舞台", bbox=(28.5, 56.0, 23.5, 39.5), fs=19,
+  markers=[M("mem","埃及（孟斐斯）","Egypt",31.25,29.85,"文明古国","尼罗河灌溉、法老王权、多神庙宇；以色列在此为奴，后又常向埃及求援。","blue",True),
+    M("gaz","非利士（五城）","Philistia",34.6,31.7,"海上民族","铁器优势、大衮崇拜；士师至大卫时期的主要敌人。","red"),
+    M("tyr","腓尼基（推罗、西顿）","Phoenicia",35.20,33.27,"航海商民","字母、紫色染料、香柏木；耶洗别把巴力崇拜带进北国。","teal"),
+    M("can","迦南（山地）","Canaan",35.2,31.9,"应许之地","巴力与亚舍拉的丰饶崇拜；宗主条约文化；城邦林立。","gold",True),
+    M("dam","亚兰（大马士革）","Aram",36.29,33.51,"内陆商国","亚兰文后来成为帝国行政语言；与北国时战时和。","purple"),
+    M("nin","亚述（尼尼微）","Assyria",43.15,36.36,"军事帝国","残暴、迁民政策、楔形文字年鉴；灭北国的工具。","red",True),
+    M("bab","巴比伦","Babylonia",44.42,32.54,"两河心脏","塔庙、星象、法典传统；灭犹大、焚圣殿。","orange",True),
+    M("sus","埃兰 / 波斯（书珊）","Elam / Persia",48.26,32.19,"高原帝国","古列允许民族归乡、恢复神庙；驿站与“不可更改的法令”。","green",True),
+    M("them","摩押 / 亚扪 / 以东","Transjordan",35.8,31.3,"亲属之邦","罗得与以扫的后裔；时为亲戚、时为仇敌（路得来自摩押）。","pink")],
+  regions=[("埃及",31.0,27.5,2.2,2.6,"blue"),("迦南",35.3,32.0,.9,.9,"gold"),("亚述",43.0,36.0,2.2,1.4,"red"),("巴比伦尼亚",45.2,31.6,2.0,1.4,"orange"),("波斯（帕尔斯）",53.0,29.8,2.4,1.6,"green"),("米底",49.5,35.6,2.6,1.6,"teal")],
+  water=[("地中海",31.5,33.6),("波斯湾",51.2,27.4),("红海",36.0,24.8)],
+  rcap="颜色区块为文化圈示意，不是现代国界。读历史书时先问：这一章的对头属于哪一个文化圈，他们的神、王权与战争观是什么")
+
 def build(outdir, ver):
     os.makedirs(outdir, exist_ok=True); out = {}
     for k, sp in SPECS.items():
@@ -131,11 +178,34 @@ def build(outdir, ver):
         open(os.path.join(outdir, k + ".svg"), "w").write(svg)
         out[k] = (sp, w, h, hs)
     return out
+def _base_of(sp):
+    lo0, lo1, la0, la1 = sp["bbox"]
+    return "ane" if (lo1-lo0) > 8 or (la1-la0) > 6 else "levant"
 def html(k, built, ver):
+    import json, scenes
     sp, w, h, hs = built[k]
     t = H.escape(sp["title"])
+    concept = scenes.concept(sp, 1040)
     hsb = "".join(f'<button class="hs" style="left:{x:.2f}%;top:{y:.2f}%" data-i="{i}" aria-label="{i+1} {H.escape(m["n"])}"></button>' for i, (m, (x, y)) in enumerate(hs))
     li = "".join(f'<li data-i="{i}" tabindex="0" style="--c:{PAL[m.get("c","blue")]};--t:{ink(PAL[m.get("c","blue")])}"><b>{i+1}</b><span><strong>{H.escape(m["n"])}</strong> <i>{H.escape(m["en"])}</i> · <em>{H.escape(m["y"])}</em>：{H.escape(m["t"])}</span></li>' for i, m in enumerate(sp["markers"]))
-    return (f'<figure class="gmap" id="map-{k}"><div class="gm-bar"><span>🗺️ {t}</span><span class="gm-z"><button data-z="-1" aria-label="缩小">－</button><button data-z="0" aria-label="复位">⟲</button><button data-z="1" aria-label="放大">＋</button></span></div>'
-            f'<div class="gm-view"><div class="gm-in" style="aspect-ratio:{w}/{h}"><img src="assets/maps/{k}.svg?v={ver}" width="{w}" height="{h}" loading="lazy" decoding="async" alt="{t}">{hsb}</div></div>'
-            f'<figcaption>真实地形底图：Natural Earth（公有领域），本站绘制；地点为通行历史地理认定（部分为“约”）。{H.escape(sp.get("rcap",""))}。点编号或下方列表可高亮地点。</figcaption><ol class="gm-leg">{li}</ol></figure>')
+    places = [dict(k=m["k"], n=m["n"], i=str(i+1), lat=m["ll"][1], lng=m["ll"][0], w=m["y"], d=m["t"], c=PAL[m.get("c","blue")], en=m.get("en","")) for i,m in enumerate(sp["markers"])]
+    routes = [dict(a=a, b=b, k=c, bend=(rest[0] if rest else .18)) for a,b,c,*rest in sp.get("routes",())]
+    data = json.dumps(dict(id=k, title=sp["title"], base=_base_of(sp), places=places, routes=routes, bbox=sp["bbox"]), ensure_ascii=False)
+    cap = H.escape(sp.get("rcap",""))
+    return (f'<figure class="mapbox reveal" id="map-{k}" data-map="{k}">'
+            f'<div class="mb-h"><div class="mb-t">🗺️ {t}</div>'
+            f'<div class="mtabs" role="tablist" aria-label="地图视图">'
+            f'<button type="button" class="on" role="tab" aria-selected="true" data-v="c">🎨 概念示意图</button>'
+            f'<button type="button" role="tab" aria-selected="false" data-v="g">🗺️ 真实地形图（离线）</button>'
+            f'<button type="button" role="tab" aria-selected="false" data-v="l">📡 实时地图 · 多源瓦片</button>'
+            f'<button type="button" class="mplay">▶ 按地点播放</button></div></div>'
+            f'<div class="mview mv-c on"><div class="cmap">{concept}</div>'
+            f'<p class="map-note">概念图按真实经纬度投影，配情景装饰与动画路线；完全离线，不依赖网络。</p></div>'
+            f'<div class="mview mv-g"><div class="gmap-inner"><div class="gm-bar"><span>Natural Earth 地形底图</span><span class="gm-z"><button type="button" data-z="-1" aria-label="缩小">－</button><button type="button" data-z="0" aria-label="复位">⟲</button><button type="button" data-z="1" aria-label="放大">＋</button></span></div>'
+            f'<div class="gm-view"><div class="gm-in" style="aspect-ratio:{w}/{h}"><img src="assets/maps/{k}.svg?v={ver}" width="{w}" height="{h}" loading="lazy" decoding="async" alt="{t}">{hsb}</div></div></div>'
+            f'<p class="map-note">公有领域地形（Natural Earth），本站预绘为静态 SVG，无瓦片、无 CDN；地点为通行历史地理认定（部分为“约”）。{cap}</p></div>'
+            f'<div class="mview mv-l"><div class="lmap" role="application" aria-label="{t} 交互地图">🗺️ 滚动到此处或点选本标签后加载交互地图…</div>'
+            f'<p class="map-note">默认自动选择可用瓦片（OpenStreetMap、CARTO、Esri、OpenTopoMap 等，均无需密钥）；某一源失败或超时将自动切换。全部失败时保留本站离线矢量底图与地点标记。首次加载Leaflet库（已自托管，无 CDN）。</p></div>'
+            f'<div class="minfo">点按编号或下方列表，查看该地在历史书中的意义。</div>'
+            f'<ol class="gm-leg">{li}</ol>'
+            f'<script type="application/json" class="mdata">{data}</script></figure>')

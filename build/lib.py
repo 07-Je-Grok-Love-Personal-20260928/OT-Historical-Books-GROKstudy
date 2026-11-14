@@ -2,7 +2,7 @@
 import json, re, os, html as H, math
 import bible
 CCI = os.environ.get("CCI_DIR", "/workspace/cci")
-VER = "20261023-v1"
+VER = "20261114-v2"
 _h = json.load(open(f"{CCI}/heidelberg.json")); _b = json.load(open(f"{CCI}/belgic.json")); _d = json.load(open(f"{CCI}/dort.json")); CREEDS = json.load(open(f"{CCI}/creeds.json"))
 HCQ = {q["q"]: dict(q, ld=ld["number"], url=ld.get("url")) for ld in _h["lordsdays"] for q in ld["questions"]}
 BCA = {a["number"]: a for a in _b["articles"]}

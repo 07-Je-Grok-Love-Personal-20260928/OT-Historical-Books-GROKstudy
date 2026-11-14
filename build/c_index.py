@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from lib import *
-import lib
+import lib, scenes
 BOOKS = [("约书亚记", "joshua.html#jos", "⚔️", "#ff6b5b", "1406–1375", "进入迦南，神信实赐地", "过河 · 夺城 · 分地 · 立约"),
          ("士师记", "judges.html#jdg", "🌀", "#ff9f43", "1375–1050", "没有王，各人任意而行", "犯罪→受罚→呼求→拯救→太平"),
          ("路得记", "judges.html#rut", "🌾", "#f2c14e", "约1150–1100", "黑暗时代的忠诚之爱", "空 → 拾 → 求 → 满"),
@@ -15,14 +15,24 @@ BOOKS = [("约书亚记", "joshua.html#jos", "⚔️", "#ff6b5b", "1406–1375",
          ("以斯帖记", "return.html#est", "👸", "#ff7eb6", "483–473", "隐藏的神，护理的手", "宴 · 谋 · 眠 · 翻 · 节")]
 def body():
     o = []
-    o.append('''<section class="hero reveal"><div class="kick">OLD TESTAMENT HISTORICAL BOOKS · CONTINENTAL REFORMED · GROKstudy 20261023-v1</div>
+    o.append('''<section class="hero reveal"><div class="kick">OLD TESTAMENT HISTORICAL BOOKS · CONTINENTAL REFORMED · GROKstudy 20261114-v2</div>
 <h1>📜 旧约历史书深读<br><small style="font-size:.5em;opacity:.85">约书亚记 → 以斯帖记 · 欧陆改革宗正统视角</small></h1>
 <p class="lead">十二卷书、一千年历史、一条主线：<b class="k">守约的神</b>把祂的百姓带进应许之地，赐他们君王与圣殿，又因他们背约而把他们赶出，最后带领余民归回——一切都在等候那位<b class="k">真约书亚、真大卫、真圣殿</b>：<b class="xr">耶稣基督</b>。</p>
-<div class="chips"><span class="chip">📖 先整体后细节</span><span class="chip">🔗 圣约神学</span><span class="chip">🗺️ 7 幅真实地图</span><span class="chip">📜 三项联合信条逐字引用</span><span class="chip">✨ 三大信经背诵版</span><span class="chip">🧠 口诀 · 卡片 · 测验</span></div></section>''')
+<div class="chips"><span class="chip">📖 先整体后细节</span><span class="chip">🔗 圣约神学</span><span class="chip">🗺️ 10 幅地图 · 多源实时瓦片</span><span class="chip">📜 三项联合信条逐字引用</span><span class="chip">✨ 三大信经背诵版</span><span class="chip">🧠 口诀 · 卡片 · 测验</span></div></section>''')
     o.append(H2("start", "🧭", "怎样使用本站", "var(--gold)"))
     o.append(flow([("① 整本圣经", "圣经神学与圣约神学的大框架", "var(--gold)"), ("② 史地文化", "年代、地理、列国、考古", "var(--green)"), ("③ 逐卷深读", "十二卷书：为什么写、写了什么、如何应用", "var(--red)")]))
     o.append(flow([("④ 信条对照", "三项联合信条与历史书的主题对照", "var(--teal)"), ("⑤ 三大信经", "背诵版与深度对比", "var(--purple)"), ("⑥ 速记自测", "口诀、翻卡、测验", "var(--blue)")]))
-    o.append('<div class="legend"><span><b class="k">金色</b>＝重点</span><span><b class="h">红色波浪</b>＝难点</span><span><span class="d">蓝色</span>＝年代</span><span><span class="pl">绿色</span>＝地名</span><span><span class="pn">紫色</span>＝人物</span><span><b class="xr">粉色</b>＝指向基督</span></div>')
+    o.append("""<div class="legend">
+<span><b class="k">重点</b>＝金色底纹</span>
+<span><b class="h">难点</b>＝红色波浪线 + 淡红底</span>
+<span><b class="xr">指向基督</b>＝粉色实线</span>
+<span><b class="cv">圣约</b>＝青色虚线</span>
+<span><b class="mm">记忆钩</b>＝紫色点线</span>
+<span><span class="d">年代</span>＝蓝色下划线</span>
+<span><span class="pl">地名</span>＝绿色底纹</span>
+<span><span class="pn">人物</span>＝橙色虚线</span>
+</div>
+<p class="mut" style="font-size:.9em">顶栏「🖍 标记」可随时打开本图例。地图均提供三种视图：概念示意图（离线）· 真实地形图（离线）· 实时多源瓦片（失败自动切换）。</p>""")
     o.append(H2("books", "📚", "十二卷历史书一览", "var(--red)"))
     o.append('<div class="grid" style="--min:250px">' + "".join(
         f'<a class="card bk reveal" href="{u}" style="--c:{c};text-decoration:none;color:inherit;position:relative"><span class="no">{i+1}</span><div class="ic">{e}</div><h4>{n}</h4><p><span class="d">主前 {d}</span></p><p>{t}</p><p style="opacity:.8;font-size:.9em">🧠 {m}</p></a>'
@@ -30,6 +40,7 @@ def body():
     o.append(mnem("书士得 · 撒上下 · 王上下 · 代上下 · 拉尼斯", "十二卷历史书顺序（中文和合本）"))
     o.append(mnem("进 — 乱 — 王 — 分 — 亡 — 回", "约书亚记进迦南 · 士师记乱 · 撒母耳记立王 · 列王纪分裂与灭亡 · 以斯拉—以斯帖归回"))
     o.append(H2("arc", "🌈", "一千年的故事线", "var(--purple)"))
+    o.append(scenes.film_arc())
     o.append(era([("约书亚：征服", -1406, -1375, "#ff6b5b", "1406 过约旦河"), ("士师时代", -1375, -1050, "#ff9f43", "七轮循环"), ("统一王国", -1050, -931, "#a98bff", "扫罗 · 大卫 · 所罗门"),
                   ("北国以色列", -931, -722, "#ff7eb6", "722 撒玛利亚陷落"), ("南国犹大", -931, -586, "#3ccf8e", "586 圣殿被焚"), ("被掳巴比伦", -605, -538, "#8c97b2", "七十年"),
                   ("归回与重建", -538, -432, "#2ed3c6", "殿 · 律 · 墙 · 命")], -1450, -400, title="历史书总时间轴"))

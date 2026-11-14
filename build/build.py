@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import os, json, importlib, sys
 sys.path.insert(0, os.path.dirname(__file__))
-import lib, layout, maps
+import lib, layout, maps, geo
 OUT = os.path.join(os.path.dirname(__file__), "..", "docs")
+geo.build(os.path.join(OUT, "assets", "geo"))
 MAPS = maps.build(os.path.join(OUT, "assets", "maps"), lib.VER)
 lib.MAPS = MAPS
 lib.MAP = lambda k: maps.html(k, MAPS, lib.VER)
